@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "book.h"
+#include "gridcheck.h"
 
 # define Section 12  // number of cooling sections
 
@@ -184,9 +185,8 @@ int main()
 	num_threadsy = nx;
 	num_threadsx = 30;
 	num_blocks = ny / num_threadsx;
-	if (ny % num_threadsx != 0)  
+	if (ny % num_threadsx != 0)  // ny mod num_threadsx must be 0
 	{
-		// ny mod num_threadsx must be 0
 		printf("The number of threadsx is error. Please check the variable \"num_threadsx\"");
 		exit(0);
 	}
@@ -198,6 +198,7 @@ int main()
 	dx = Lx / (nx - 1);            // the grid size x
 	dy = Ly / (ny - 1);            // the grid size y
 	tao = t_final / (tnpts - 1);   // the time step size
+	gridcheck(dx, dy, tao);
 
 	printf("Casting Temperature = %f ", T_Cast);
 	printf("\n");
