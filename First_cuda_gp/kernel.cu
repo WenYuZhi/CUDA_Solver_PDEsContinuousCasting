@@ -49,7 +49,7 @@ __global__ void MainKernel(float *T_New, float *T_Last, float *ccml, float *H_In
 			T_New[idx] = a*(tao / (dx*dx))*T_Up + a*(tao / (dx*dx))*T_Down + (1 - 2 * a*(tao / (dx*dx)) - 2 * a*(tao / (dy*dy)) + tao*Vcast / dy)*T_Middle +
 				a*(tao / (dy*dy))*T_Right + (a*(tao / (dy*dy)) - tao*Vcast / dy)*T_Left;
 		}
-		else if (i == 0 && j != 0 && j != nx - 1)  //3
+		else if (i == 0)  //3
 		{
 			T_New[idx] = T_Cast;
 		}
@@ -63,11 +63,7 @@ __global__ void MainKernel(float *T_New, float *T_Last, float *ccml, float *H_In
 			T_New[idx] = a*(tao / (dx*dx))*T_Up + a*(tao / (dx*dx))*T_Down + (1 - 2 * a*(tao / (dx*dx)) - 2 * a*(tao / (dy*dy)) + tao*Vcast / dy)*T_Middle +
 				a*(tao / (dy*dy))*T_Right + (a*(tao / (dy*dy)) - tao*Vcast / dy)*T_Left;
 		}
-		else if (j == 0 && i == 0)  //5
-		{
-			T_New[idx] = T_Cast;
-		}
-		else if (j == 0 && i == ny - 1)  //6
+		else if (j == 0 && i == ny - 1)  //5
 		{
 			T_Middle = T_Last[idx];
 			T_Up = T_Last[idx + D];
@@ -77,11 +73,7 @@ __global__ void MainKernel(float *T_New, float *T_Last, float *ccml, float *H_In
 			T_New[idx] = a*(tao / (dx*dx))*T_Up + a*(tao / (dx*dx))*T_Down + (1 - 2 * a*(tao / (dx*dx)) - 2 * a*(tao / (dy*dy)) + tao*Vcast / dy)*T_Middle +
 				a*(tao / (dy*dy))*T_Right + (a*(tao / (dy*dy)) - tao*Vcast / dy)*T_Left;
 		}
-		else if (j == nx - 1 && i == 0)   //7
-		{
-			T_New[idx] = T_Cast;
-		}
-		else if (j == nx - 1 && i == ny - 1) //8
+		else if (j == nx - 1 && i == ny - 1) //6
 		{
 			T_Middle = T_Last[idx];
 			T_Up = T_Last[idx - D];
@@ -91,7 +83,7 @@ __global__ void MainKernel(float *T_New, float *T_Last, float *ccml, float *H_In
 			T_New[idx] = a*(tao / (dx*dx))*T_Up + a*(tao / (dx*dx))*T_Down + (1 - 2 * a*(tao / (dx*dx)) - 2 * a*(tao / (dy*dy)) + tao*Vcast / dy)*T_Middle +
 				a*(tao / (dy*dy))*T_Right + (a*(tao / (dy*dy)) - tao*Vcast / dy)*T_Left;
 		}
-		else if (j != 0 && j != nx - 1 && i != 0 && i != ny - 1) //9
+		else if (j != 0 && j != nx - 1 && i != 0 && i != ny - 1) //7
 		{
 			T_Middle = T_Last[idx];
 			T_Up = T_Last[idx + D];
@@ -125,7 +117,7 @@ __global__ void MainKernel(float *T_New, float *T_Last, float *ccml, float *H_In
 			T_Last[idx] = a*(tao / (dx*dx))*T_Up + a*(tao / (dx*dx))*T_Down + (1 - 2 * a*(tao / (dx*dx)) - 2 * a*(tao / (dy*dy)) + tao*Vcast / dy)*T_Middle +
 				a*(tao / (dy*dy))*T_Right + (a*(tao / (dy*dy)) - tao*Vcast / dy)*T_Left;
 		}
-		else if (i == 0 && j != 0 && j != nx - 1)  //3
+		else if (i == 0)  //3
 		{
 			T_Last[idx] = T_Cast;
 		}
@@ -139,11 +131,7 @@ __global__ void MainKernel(float *T_New, float *T_Last, float *ccml, float *H_In
 			T_Last[idx] = a*(tao / (dx*dx))*T_Up + a*(tao / (dx*dx))*T_Down + (1 - 2 * a*(tao / (dx*dx)) - 2 * a*(tao / (dy*dy)) + tao*Vcast / dy)*T_Middle +
 				a*(tao / (dy*dy))*T_Right + (a*(tao / (dy*dy)) - tao*Vcast / dy)*T_Left;
 		}
-		else if (i == 0 && j == 0)  //5
-		{
-			T_Last[idx] = T_Cast;
-		}
-		else if (j == 0 && i == ny - 1)  //6
+		else if (j == 0 && i == ny - 1)  //5
 		{
 			T_Middle = T_New[idx];
 			T_Up = T_New[idx + D];
@@ -153,11 +141,7 @@ __global__ void MainKernel(float *T_New, float *T_Last, float *ccml, float *H_In
 			T_Last[idx] = a*(tao / (dx*dx))*T_Up + a*(tao / (dx*dx))*T_Down + (1 - 2 * a*(tao / (dx*dx)) - 2 * a*(tao / (dy*dy)) + tao*Vcast / dy)*T_Middle +
 				a*(tao / (dy*dy))*T_Right + (a*(tao / (dy*dy)) - tao*Vcast / dy)*T_Left;
 		}
-		else if (j == nx - 1 && i == 0)   //7
-		{
-			T_Last[idx] = T_Cast;
-		}
-		else if (j == nx - 1 && i == ny - 1) //8
+		else if (j == nx - 1 && i == ny - 1) //6
 		{
 			T_Middle = T_New[idx];
 			T_Up = T_New[idx - D];
@@ -167,7 +151,7 @@ __global__ void MainKernel(float *T_New, float *T_Last, float *ccml, float *H_In
 			T_Last[idx] = a*(tao / (dx*dx))*T_Up + a*(tao / (dx*dx))*T_Down + (1 - 2 * a*(tao / (dx*dx)) - 2 * a*(tao / (dy*dy)) + tao*Vcast / dy)*T_Middle +
 				a*(tao / (dy*dy))*T_Right + (a*(tao / (dy*dy)) - tao*Vcast / dy)*T_Left;
 		}
-		else if (j != 0 && j != nx - 1 && i != 0 && i != ny - 1)  //9
+		else if (j != 0 && j != nx - 1 && i != 0 && i != ny - 1)  //7
 		{
 			T_Middle = T_New[idx];
 			T_Up = T_New[idx + D];

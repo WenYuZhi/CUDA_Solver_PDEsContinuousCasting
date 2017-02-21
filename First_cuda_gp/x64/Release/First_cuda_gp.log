@@ -101,11 +101,11 @@ c:\program files\nvidia gpu computing toolkit\cuda\v8.0\include\math_functions.h
 c:\program files\nvidia gpu computing toolkit\cuda\v8.0\include\math_functions.h(7956): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 CUDACOMPILE : nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
   kernel.cu
-C:/Users/Administrator/Desktop/My paper/CUDA/GPU_SolverPDEs/CUDA_Solver_PDEsContinuousCasting/First_cuda_gp/kernel.cu(188): warning C4305: “初始化”: 从“double”到“float”截断
-C:/Users/Administrator/Desktop/My paper/CUDA/GPU_SolverPDEs/CUDA_Solver_PDEsContinuousCasting/First_cuda_gp/kernel.cu(190): warning C4838: 从“double”转换到“float”需要收缩转换
-C:/Users/Administrator/Desktop/My paper/CUDA/GPU_SolverPDEs/CUDA_Solver_PDEsContinuousCasting/First_cuda_gp/kernel.cu(190): warning C4305: “初始化”: 从“double”到“float”截断
-C:/Users/Administrator/Desktop/My paper/CUDA/GPU_SolverPDEs/CUDA_Solver_PDEsContinuousCasting/First_cuda_gp/kernel.cu(191): warning C4838: 从“double”转换到“float”需要收缩转换
-C:/Users/Administrator/Desktop/My paper/CUDA/GPU_SolverPDEs/CUDA_Solver_PDEsContinuousCasting/First_cuda_gp/kernel.cu(191): warning C4305: “初始化”: 从“double”到“float”截断
+C:/Users/Administrator/Desktop/My paper/CUDA/GPU_SolverPDEs/CUDA_Solver_PDEsContinuousCasting/First_cuda_gp/kernel.cu(172): warning C4305: “初始化”: 从“double”到“float”截断
+C:/Users/Administrator/Desktop/My paper/CUDA/GPU_SolverPDEs/CUDA_Solver_PDEsContinuousCasting/First_cuda_gp/kernel.cu(174): warning C4838: 从“double”转换到“float”需要收缩转换
+C:/Users/Administrator/Desktop/My paper/CUDA/GPU_SolverPDEs/CUDA_Solver_PDEsContinuousCasting/First_cuda_gp/kernel.cu(174): warning C4305: “初始化”: 从“double”到“float”截断
+C:/Users/Administrator/Desktop/My paper/CUDA/GPU_SolverPDEs/CUDA_Solver_PDEsContinuousCasting/First_cuda_gp/kernel.cu(175): warning C4838: 从“double”转换到“float”需要收缩转换
+C:/Users/Administrator/Desktop/My paper/CUDA/GPU_SolverPDEs/CUDA_Solver_PDEsContinuousCasting/First_cuda_gp/kernel.cu(175): warning C4305: “初始化”: 从“double”到“float”截断
   LINK : 已指定 /LTCG，但不需要生成代码；从链接命令行中移除 /LTCG 以提高链接器性能
   First_cuda_gp.vcxproj -> C:\Users\Administrator\Desktop\My paper\CUDA\GPU_SolverPDEs\CUDA_Solver_PDEsContinuousCasting\x64\Release\Cuda_GPU_Solver2DContinuousCasting.exe
   First_cuda_gp.vcxproj -> C:\Users\Administrator\Desktop\My paper\CUDA\GPU_SolverPDEs\CUDA_Solver_PDEsContinuousCasting\x64\Release\Cuda_GPU_Solver2DContinuousCasting.pdb (Full PDB)
