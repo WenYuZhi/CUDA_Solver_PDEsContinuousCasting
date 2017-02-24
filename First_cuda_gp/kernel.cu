@@ -12,7 +12,7 @@
 
 cudaError_t addWithCuda(float *T_Init, float dx, float dy, float tao, int nx, int ny, int tnpts, float *, float *, int num_blocks, int num_threadsx, int num_threadsy);
 __device__ void Physicial_Parameters(float T, float *pho, float *Ce, float *lamd);
-__device__ float Boundary_Condition(int j, int ny, float dx, float *ccml_zone, float *H_Init);
+__device__ float Boundary_Condition(int j, float dx, float *ccml_zone, float *H_Init);
 
 __global__ void MainKernel(float *T_New, float *T_Last, float *ccml, float *H_Init, float dx, float dy, float tao, int nx, int ny, bool disout)
 {
@@ -24,11 +24,12 @@ __global__ void MainKernel(float *T_New, float *T_Last, float *ccml, float *H_In
 	float pho, Ce, lamd; // physical parameters pho represents desity, Ce is specific heat and lamd is thermal conductivity
 	float a, T_Up, T_Down, T_Right, T_Left, T_Middle, h = 0.0, Tw = 30.0, Vcast = -0.02, T_Cast = 1558.0;
 
-	Physicial_Parameters(T_Last[idx], &pho, &Ce, &lamd);
-	a = (lamd) / (pho*Ce);
-	h = Boundary_Condition(i, ny, dy, ccml, H_Init);
+
 
 	if (disout) {
+		Physicial_Parameters(T_Last[idx], &pho, &Ce, &lamd);
+		a = (lamd) / (pho*Ce);
+		h = Boundary_Condition(i, dy, ccml, H_Init);
 		if (j == 0 && i != 0 && i != ny - 1) //1
 		{
 			T_Middle = T_Last[idx];
@@ -97,6 +98,9 @@ __global__ void MainKernel(float *T_New, float *T_Last, float *ccml, float *H_In
 
 	else
 	{
+		Physicial_Parameters(T_New[idx], &pho, &Ce, &lamd);
+		a = (lamd) / (pho*Ce);
+		h = Boundary_Condition(i, dy, ccml, H_Init);
 		if (j == 0 && i != 0 && i != ny - 1) //1
 		{
 			T_Middle = T_New[idx];
@@ -326,7 +330,7 @@ __device__ void Physicial_Parameters(float T, float *pho, float *Ce, float *lamd
 
 }
 
-__device__ float Boundary_Condition(int j, int ny, float dy, float *ccml_zone, float *H_Init)
+__device__ float Boundary_Condition(int j, float dy, float *ccml_zone, float *H_Init)
 {
 	float YLabel, h = 0.0;
 	YLabel = j*dy;
