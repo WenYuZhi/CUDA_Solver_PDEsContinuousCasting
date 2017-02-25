@@ -9,10 +9,14 @@
 #include "gridcheck.h"
 
 # define Section 12  // number of cooling sections
+float ccml[Section + 1] = { 0.0,0.2,0.4,0.6,0.8,1.0925,2.27,4.29,5.831,9.6065,13.6090,19.87014,28.599 }; // The cooling sections
+float H_Init[Section] = { 1380,1170,980,800,1223.16,735.05,424.32,392.83,328.94,281.64,246.16,160.96 };  // The heat transfer coefficients in the cooling sections
+float TMean[Section] = { 0.0 };
 
-cudaError_t addWithCuda(float *T_Init, float dx, float dy, float tao, int nx, int ny, int tnpts, float *, float *, int num_blocks, int num_threadsx, int num_threadsy);
+cudaError_t addWithCuda(float *T_Init, float dx, float dy, float tao, int nx, int ny, int tnpts, int num_blocks, int num_threadsx, int num_threadsy);
 __device__ void Physicial_Parameters(float T, float *pho, float *Ce, float *lamd);
 __device__ float Boundary_Condition(int j, float dx, float *ccml_zone, float *H_Init);
+void Calculation_MeanTemperature(int j, float dy, float *ccml_zone, float *T);
 
 __global__ void MainKernel(float *T_New, float *T_Last, float *ccml, float *H_Init, float dx, float dy, float tao, int nx, int ny, bool disout)
 {
@@ -172,11 +176,9 @@ int main()
 {
 	const int nx = 11, ny = 3000;   // nx is the number of grid in x direction, ny is the number of grid in y direction.
 	int num_blocks = 1, num_threadsx = 1, num_threadsy = 1; // block number(1D)  thread number in x and y dimension(2D)
-	int tnpts = 10000;  // time step
+	int tnpts = 10001;  // time step
 	float T_Cast = 1558.0, Lx = 0.125, Ly = 28.599, t_final = 2000.0, dx, dy, tao;  // T_Cast is the casting temperature Lx and Ly is the thick and length of steel billets
 	float *T_Init;
-	float ccml[Section + 1] = { 0.0,0.2,0.4,0.6,0.8,1.0925,2.27,4.29,5.831,9.6065,13.6090,19.87014,28.599 }; // The cooling sections
-	float H_Init[Section] = { 1380,1170,980,800,1223.16,735.05,424.32,392.83,328.94,281.64,246.16,160.96 };  // The heat transfer coefficients in the cooling sections
 
 	T_Init = (float *)calloc(nx * ny, sizeof(float));  // Initial condition
 
@@ -211,7 +213,7 @@ int main()
 	printf("simulation time(s) = %f\n ", t_final);
 
 	clock_t timestart = clock();
-	cudaError_t cudaStatus = addWithCuda(T_Init, dx, dy, tao, nx, ny, tnpts, ccml, H_Init, num_blocks, num_threadsx, num_threadsy);
+	cudaError_t cudaStatus = addWithCuda(T_Init, dx, dy, tao, nx, ny, tnpts, num_blocks, num_threadsx, num_threadsy);
 	if (cudaStatus != cudaSuccess) {
 		fprintf(stderr, "addWithCuda failed!");
 		return 1;
@@ -231,11 +233,11 @@ int main()
 	return 0;
 }
 
-cudaError_t addWithCuda(float *T_Init, float dx, float dy, float tao, int nx, int ny, int tnpts, float *ccml, float *H_Init, int num_blocks, int num_threadsx, int num_threadsy)
+cudaError_t addWithCuda(float *T_Init, float dx, float dy, float tao, int nx, int ny, int tnpts, int num_blocks, int num_threadsx, int num_threadsy)
 {
 	float *dev_T_New, *dev_T_Last, *dev_ccml, *dev_H_Init; // the point on GPU
 	float *T_Result;
-	const int Num_Iter = 500;                         // The result can be obtained by every Num_Iter time step
+	const int Num_Iter = 1000;                         // The result can be obtained by every Num_Iter time step
 	volatile bool dstOut = true;
 	FILE *fp = NULL;
 
@@ -264,8 +266,9 @@ cudaError_t addWithCuda(float *T_Init, float dx, float dy, float tao, int nx, in
 		if (i % Num_Iter == 0) {
 			HANDLE_ERROR(cudaMemcpy(T_Result, dev_T_Last, nx * ny * sizeof(float), cudaMemcpyDeviceToHost));
 			printf("time_step = %d  simulation time is %f\n", i, i*tao);
-			printf("%f, %f, %f", T_Result[0], T_Result[(nx - 1)*(ny - 1) - nx], T_Result[(nx - 1)*(ny - 1)]);
-			printf("\n");
+			//printf("%f, %f, %f", T_Result[0], T_Result[(nx - 1)*(ny - 1) - nx], T_Result[(nx - 1)*(ny - 1)]);
+			//printf("\n");
+			Calculation_MeanTemperature(ny, dy, ccml, T_Result);  // calculation the mean surface temperature of steel billets in every cooling sections
 		}
 	}
 
@@ -341,4 +344,34 @@ __device__ float Boundary_Condition(int j, float dy, float *ccml_zone, float *H_
 			h = *(H_Init + i);
 	}
 	return h;
+}
+
+void Calculation_MeanTemperature(int ny, float dy, float *ccml, float *T)
+{
+	float y;
+	int count = 0;
+	int i = 0, Zone = 0;
+
+
+	for (int i = 0; i < Section; i++)
+	{
+		TMean[i] = 0.0;
+		for (int j = 0; j < ny; j++)
+		{
+			y = j * dy;
+			if (y > *(ccml + i) && y <= *(ccml + i + 1))
+				{
+					TMean[i] = TMean[i] + T[Zone * ny + j];
+					count++;
+				}
+		}
+		TMean[i] = TMean[i] / float(count);
+		count = 0;
+	}
+
+	printf("\n");
+	for (int i = 0; i < Section; i++)
+		printf("zone %d = %f  ", i + 1, TMean[i]);
+	printf("\n");
+
 }
